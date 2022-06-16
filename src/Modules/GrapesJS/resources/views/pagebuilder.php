@@ -13,8 +13,8 @@
     </div>
 </div>
 
-<div id="gjs"></div>
-
+<div id="gjs">
+</div>
 <script type="text/javascript" src="https://cdn.ckeditor.com/4.14.0/full-all/ckeditor.js"></script>
 <script type="text/javascript" src="<?= phpb_asset('pagebuilder/grapesjs-plugin-ckeditor-v0.0.9.min.js') ?>"></script>
 <script type="text/javascript" src="<?= phpb_asset('pagebuilder/grapesjs-touch-v0.1.1.min.js') ?>"></script>
@@ -46,6 +46,8 @@ window.renderLanguageVariantUrl = '<?= phpb_url('pagebuilder', ['action' => 'ren
 $config = require __DIR__ . '/grapesjs/config.php';
 ?>
 let config = <?= json_encode($config) ?>;
+console.log(config);
+
 if (window.customConfig !== undefined) {
     config = $.extend(true, {}, window.customConfig, config);
 }
@@ -70,11 +72,14 @@ window.grapesJSTranslations = {
             }
         },
         assetManager: {
+             custom:true,
             addButton: '<?= phpb_trans('pagebuilder.asset-manager.add-image') ?>',
             inputPlh: 'http://path/to/the/image.jpg',
             modalTitle: '<?= phpb_trans('pagebuilder.asset-manager.modal-title') ?>',
-            uploadTitle: '<?= phpb_trans('pagebuilder.asset-manager.drop-files') ?>'
+            uploadTitle: '<?= phpb_trans('pagebuilder.asset-manager.drop-files') ?>',
         }
+
+
     }
 };
 
@@ -83,11 +88,15 @@ window.editor = window.grapesjs.init(config);
 window.editor.on('load', function(editor) {
     window.grapesJSLoaded = true;
 });
+
 window.editor.I18n.addMessages(window.grapesJSTranslations);
 
 // load the default or earlier saved page css components
 editor.setStyle(window.initialStyle);
+
 </script>
+
+
 
 <?php
 require __DIR__ . '/grapesjs/asset-manager.php';
