@@ -420,7 +420,7 @@
         component.attributes['is-updating'] = true;
         let settings = window.blockSettings[component.attributes['block-slug']];
         settings.forEach(function(setting) {
-            let trait = component.addTrait(setting);
+            let trait = component.addTrait(setting)[0];
             if (settingValues[setting['name']] !== undefined) {
                 trait.setTargetValue(settingValues[setting['name']]);
             } else if (setting['default-value'] !== undefined) {
