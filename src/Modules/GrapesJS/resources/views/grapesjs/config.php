@@ -12,10 +12,11 @@ return [
     ],
     'canvasCss' => 'body {height: auto;}',  // prevent scrollbar jump on pasting in CKEditor
     'assetManager' => [
-        'upload' => phpb_url('pagebuilder', ['action' => 'upload', 'page' => $page->getId()]),
-        'uploadName' => 'files',
-        'multiUpload' => false,
-        'assets' => $assets
+//        'upload' => phpb_url('pagebuilder', ['action' => 'upload', 'page' => $page->getId()]),
+//        'uploadName' => 'files',
+//        'multiUpload' => false,
+//        'assets' => $assets
+            'custom' => true
     ],
     'styleManager' => [
         'sectors' => [[

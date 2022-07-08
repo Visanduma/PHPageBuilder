@@ -70,6 +70,7 @@ window.grapesJSTranslations = {
             }
         },
         assetManager: {
+            custom: true,
             addButton: '<?= phpb_trans('pagebuilder.asset-manager.add-image') ?>',
             inputPlh: 'http://path/to/the/image.jpg',
             modalTitle: '<?= phpb_trans('pagebuilder.asset-manager.modal-title') ?>',

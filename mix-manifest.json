@@ -1,0 +1,9 @@
+{
+    "/dist/pagebuilder/app.js": "/dist/pagebuilder/app.js",
+    "/dist/websitemanager/app.js": "/dist/websitemanager/app.js",
+    "/dist/auth/app.css": "/dist/auth/app.css",
+    "/dist/websitemanager/app.css": "/dist/websitemanager/app.css",
+    "/dist/pagebuilder/app.css": "/dist/pagebuilder/app.css",
+    "/dist/pagebuilder/page-injection.css": "/dist/pagebuilder/page-injection.css",
+    "/dist/pagebuilder/page-injection.js": "/dist/pagebuilder/page-injection.js"
+}
