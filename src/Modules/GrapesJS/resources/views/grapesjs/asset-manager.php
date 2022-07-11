@@ -44,26 +44,27 @@
 
 <script type="text/javascript">
 
-window.editor.on('asset:remove', function(asset) {
-    let assetId = asset.attributes.public_id;
-    $.ajax({
-        type: "POST",
-        url: "<?= phpb_url('pagebuilder', ['action' => 'upload_delete', 'page' => $page->getId()]) ?>",
-        data: {
-            id: assetId
-        },
-        success: function() {
-        },
-        error: function() {
-        }
-    });
-});
 
+
+//window.editor.on('asset:remove', function(asset) {
+//    let assetId = asset.attributes.public_id;
+//    $.ajax({
+//        type: "POST",
+//        url: "<?//= phpb_url('pagebuilder', ['action' => 'upload_delete', 'page' => $page->getId()]) ?>//",
+//        data: {
+//            id: assetId
+//        },
+//        success: function() {
+//        },
+//        error: function() {
+//        }
+//    });
+//});
 
 
 // Vue image picker
 
-new Vue({
+window.vueApp = new Vue({
     el: '#picker',
     data: {
         imageData:null,
@@ -73,26 +74,17 @@ new Vue({
         isUploading: false
     },
     mounted() {
-        window.editor.Commands.add('open-assets', {
-            run(editor,sender, opts = {}) {
-                editor.getSelected().set('src','asdasd')
-                const modal = editor.Modal;
-                let assettarget = opts.target;
-                modal.setTitle('Image picker');
 
-                modal.setContent(this.$el);
-                modal.open();
-
-            }
-        })
         this.load()
     },
     destroyed() {
-        window.editor.off('asset:custom', this.handleAssets);
+
     },
     methods: {
         select(p){
-          alert(p)
+            const component = window.editor.getSelected();
+            component.addAttributes({ image: p });
+            window.editor.Modal.close()
         },
 
         handleAssets(props) {
@@ -162,6 +154,9 @@ new Vue({
                     this.load()
                     this.clear()
                 })
+                .catch(e =>{
+                    alert("Image upload failed !")
+                })
                 .finally(() =>{
                     this.isUploading = false
                     this.load()
@@ -212,6 +207,15 @@ new Vue({
     }
 });
 
+
+// window.editor.Commands.add('open-assets', {
+//     run(editor,sender, opts = {}) {
+//         const modal = editor.Modal;
+//         modal.setTitle('Image picker');
+//         modal.setContent(vueApp.$el)
+//         modal.open();
+//     }
+// })
 
 
 
