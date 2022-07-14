@@ -109,7 +109,6 @@ window.vueApp = new Vue({
         },
 
         dragenter() {
-            console.log('d entered')
             this.$refs.overlay.classList.remove('d-none')
             this.$refs.overlay.classList.add('drop-overlay')
         },
@@ -150,16 +149,16 @@ window.vueApp = new Vue({
             this.isUploading = true
             axios.post('/dashboard/sapi/media/store', this.form)
                 .then(res => {
+                    toastr.sucess('Image uploaded !')
                     this.dragleave()
-                    this.load()
-                    this.clear()
                 })
                 .catch(e =>{
-                    alert("Image upload failed !")
+                    toastr.error('Image upload failed !')
                 })
                 .finally(() =>{
                     this.isUploading = false
                     this.load()
+                    this.clear()
                 })
         },
 
