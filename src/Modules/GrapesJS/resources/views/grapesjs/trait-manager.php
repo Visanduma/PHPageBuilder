@@ -20,8 +20,9 @@ editor.TraitManager.addType('image', {
             window.editor.runCommand('open-assets', {
                 onSelect: asset => {
                     preview.setAttribute('src', asset.attributes.src);
-                    // update component setting and trigger editor component:update event
+                    //update component setting and trigger editor component:update event
                     component.addAttributes({[traitName]: asset.attributes.src});
+
                 }
             });
         });

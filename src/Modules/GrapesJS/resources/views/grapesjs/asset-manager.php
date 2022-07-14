@@ -22,7 +22,7 @@
             <div class="input-group my-2">
                 <input v-model="searchText" @keyup.prevent.enter="search" class="form-control" type="text"  placeholder="Search files...">
                 <div class="input-group-append">
-                <button @click="search" type="button"  name="button" class="btn btn-primary" aria-label="Search posts"><i class="fa fa-search"></i></button>
+                    <button @click="search" type="button"  name="button" class="btn btn-primary" aria-label="Search posts"><i class="fa fa-search"></i></button>
                 </div>
             </div>
             <input @change="handleFileInput" type="file" multiple
@@ -40,166 +40,189 @@
     </div>
 </div>
 
+
+
 <script type="text/javascript">
 
-    //window.editor.on('asset:remove', function (asset) {
-    //    let assetId = asset.attributes.public_id;
-    //    $.ajax({
-    //        type: "POST",
-    //        url: "<?//= phpb_url('pagebuilder', ['action' => 'upload_delete', 'page' => $page->getId()]) ?>//",
-    //        data: {
-    //            id: assetId
-    //        },
-    //        success: function () {
-    //        },
-    //        error: function () {
-    //        }
-    //    });
-    //});
 
 
-    window.editor.on('asset:add',function(asa){
-        window.editor.AssetManager.close();
-    })
+//window.editor.on('asset:remove', function(asset) {
+//    let assetId = asset.attributes.public_id;
+//    $.ajax({
+//        type: "POST",
+//        url: "<?//= phpb_url('pagebuilder', ['action' => 'upload_delete', 'page' => $page->getId()]) ?>//",
+//        data: {
+//            id: assetId
+//        },
+//        success: function() {
+//        },
+//        error: function() {
+//        }
+//    });
+//});
 
-    new Vue({
-        el: '#picker',
-        data: {
-            imageData:null,
-            files:[],
-            form:null,
-            searchText:"",
-            isUploading: false
+
+// Vue image picker
+
+window.vueApp = new Vue({
+    el: '#picker',
+    data: {
+        imageData:null,
+        files:[],
+        form:null,
+        searchText:"",
+        isUploading: false
+    },
+    mounted() {
+
+        this.load()
+    },
+    destroyed() {
+
+    },
+    methods: {
+        select(p){
+            const component = window.editor.getSelected();
+            component.addAttributes({ image: p });
+            window.editor.Modal.close()
         },
-        mounted() {
-            window.editor.on('asset:custom', this.handleAssets);
-            this.load()
+
+        handleAssets(props) {
+            props.container.appendChild(this.$el);
+            this.select = props.select;
+            this.remove = props.remove;
         },
-        destroyed() {
-            window.editor.off('asset:custom', this.handleAssets);
+
+        load(url='/dashboard/sapi/media/all',){
+            axios.get(url)
+                .then(res=>{
+                    this.imageData = res.data
+                })
         },
-        methods: {
-            handleAssets(props) {
-                props.container.appendChild(this.$el);
-                this.select = props.select;
-                this.remove = props.remove;
-            },
 
-            load(url='/dashboard/sapi/media/all',){
-                axios.get(url)
-                    .then(res=>{
-                        this.imageData = res.data
-                    })
-            },
+        next(){
+            this.load(this.imageData.links.next)
+        },
 
-            next(){
-                this.load(this.imageData.links.next)
-            },
+        prev(){
+            this.load(this.imageData.links.prev)
+        },
 
-            prev(){
-                this.load(this.imageData.links.prev)
-            },
+        dragenter() {
+            this.$refs.overlay.classList.remove('d-none')
+            this.$refs.overlay.classList.add('drop-overlay')
+        },
 
-            dragenter() {
-                console.log('d entered')
-                this.$refs.overlay.classList.remove('d-none')
-                this.$refs.overlay.classList.add('drop-overlay')
-            },
+        dragleave() {
+            this.$refs.overlay.classList.add('d-none')
+            this.$refs.overlay.classList.remove('drop-overlay')
+        },
 
-            dragleave() {
-                this.$refs.overlay.classList.add('d-none')
-                this.$refs.overlay.classList.remove('drop-overlay')
-            },
+        handleFileInput(e) {
+            let formData = new FormData()
+            let files = e.target.files
+            if(!files) return;
+            ([...files]).forEach(f => {
+                this.files.push({ file: f, img: URL.createObjectURL(f)})
+                formData.append('files[]',f)
+            });
 
-            handleFileInput(e) {
-                let formData = new FormData()
-                let files = e.target.files
-                if(!files) return;
-                ([...files]).forEach(f => {
-                    this.files.push({ file: f, img: URL.createObjectURL(f)})
-                    formData.append('files[]',f)
-                });
+            this.form = formData
+            this.upload()
+        },
 
-                this.form = formData
-                this.upload()
-            },
+        handleFileDrop(e) {
+            let formData = new FormData()
+            let droppedFiles = e.dataTransfer.files
+            // alert('dropped')
+            if(!droppedFiles) return;
+            ([...droppedFiles]).forEach(f => {
+                this.files.push({ file: f, img: URL.createObjectURL(f)})
+                formData.append('files[]',f)
+            });
 
-            handleFileDrop(e) {
-                let formData = new FormData()
-                let droppedFiles = e.dataTransfer.files
-                // alert('dropped')
-                if(!droppedFiles) return;
-                ([...droppedFiles]).forEach(f => {
-                    this.files.push({ file: f, img: URL.createObjectURL(f)})
-                    formData.append('files[]',f)
-                });
+            this.form = formData
+            this.upload()
+        },
 
-                this.form = formData
-                this.upload()
-            },
-
-            upload(){
-                this.isUploading = true
-                axios.post('/dashboard/sapi/media/store', this.form)
+        upload(){
+            this.isUploading = true
+            axios.post('/dashboard/sapi/media/store', this.form)
                 .then(res => {
+                    toastr.sucess('Image uploaded !')
                     this.dragleave()
-                    this.load()
-                    this.clear()
+                })
+                .catch(e =>{
+                    toastr.error('Image upload failed !')
                 })
                 .finally(() =>{
                     this.isUploading = false
                     this.load()
+                    this.clear()
                 })
-            },
-
-            clear(){
-                this.form = null
-                this.files = []
-                this.load()
-            },
-
-            pickFile(){
-                this.$refs.filepicker.click()
-            },
-
-            search(){
-                this.load('/dashboard/sapi/media/all?keyword=' + this.searchText)
-            },
-
-            setFile(e){
-                this.$emit('done',e)
-            },
-
-            handleSelectedImage(e){
-                this.$emit('selected',e)
-                this.clear()
-                this.$destroy()
-            }
-
-
         },
 
-        computed:{
-            hasNext(){
-                if(this.imageData){
-                    return this.imageData.links.next != null
-                }
-                return false
-            },
-            isFirst(){
-                if(this.imageData){
-                    return this.imageData.links.prev == null
-                }
-                return true
+        clear(){
+            this.form = null
+            this.files = []
+            this.load()
+        },
 
-            }
+        pickFile(){
+            this.$refs.filepicker.click()
+        },
+
+        search(){
+            this.load('/dashboard/sapi/media/all?keyword=' + this.searchText)
+        },
+
+        setFile(e){
+            this.$emit('done',e)
+        },
+
+        handleSelectedImage(e){
+            this.$emit('selected',e)
+            this.clear()
+            this.$destroy()
         }
-    });
+
+
+    },
+
+    computed:{
+        hasNext(){
+            if(this.imageData){
+                return this.imageData.links.next != null
+            }
+            return false
+        },
+        isFirst(){
+            if(this.imageData){
+                return this.imageData.links.prev == null
+            }
+            return true
+
+        }
+    }
+});
+
+
+window.editor.Commands.add('open-assets', {
+    run(editor,sender, opts = {}) {
+        const modal = editor.Modal;
+        modal.setTitle('Image picker');
+        modal.setContent(vueApp.$el)
+        modal.open();
+    }
+})
+
 
 
 
 
 </script>
+
+
 
 <style>
     .photos {
@@ -223,7 +246,7 @@
         cursor: pointer;
         border-radius: 16px;
     }
-    
+
     .parent {
         position: relative;
     }
@@ -250,6 +273,6 @@
         cursor: pointer;
     }
 
- }
+    }
 
 </style>
