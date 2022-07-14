@@ -31,7 +31,7 @@
 
         <div ref="container" class="" v-if="imageData" @dragenter.prevent="dragenter" >
             <div class="photos"  >
-                <div @click="select(image.url)"  :key="image.id" v-for="image in imageData.data" class="parent">
+                <div @click="select(image.dataUrl)"  :key="image.id" v-for="image in imageData.data" class="parent">
                     <img class="img" :src="image.url "/>
                     <span class="file-info">{{ image.name }}</span>
                 </div>
