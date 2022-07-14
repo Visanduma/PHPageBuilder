@@ -208,14 +208,14 @@ window.vueApp = new Vue({
 });
 
 
-// window.editor.Commands.add('open-assets', {
-//     run(editor,sender, opts = {}) {
-//         const modal = editor.Modal;
-//         modal.setTitle('Image picker');
-//         modal.setContent(vueApp.$el)
-//         modal.open();
-//     }
-// })
+window.editor.Commands.add('open-assets', {
+    run(editor,sender, opts = {}) {
+        const modal = editor.Modal;
+        modal.setTitle('Image picker');
+        modal.setContent(vueApp.$el)
+        modal.open();
+    }
+})
 
 
 
