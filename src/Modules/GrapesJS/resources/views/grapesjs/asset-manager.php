@@ -149,11 +149,11 @@ window.vueApp = new Vue({
             this.isUploading = true
             axios.post('/dashboard/sapi/media/store', this.form)
                 .then(res => {
-                    toastr.sucess('Image uploaded !')
+                    toastr.success(res.data.message)
                     this.dragleave()
                 })
                 .catch(e =>{
-                    toastr.error('Image upload failed !')
+                    toastr.error(e.response.data.message)
                 })
                 .finally(() =>{
                     this.isUploading = false
